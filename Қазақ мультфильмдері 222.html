@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Қазақ мультфильмдері ойындары</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFE5B4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #FF6B6B;
+            text-shadow: 2px 2px 4px #FFF;
+        }
+        input {
+            margin: 10px 0;
+            padding: 5px;
+            width: 200px;
+        }
+        .game-button {
+            background-color: #4ECDC4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 250px;
+        }
+        #gameContent {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            width: 80%;
+            max-width: 600px;
+        }
+        .item-button {
+            width: 150px;
+            height: 150px;
+            margin: 10px;
+            background-size: cover;
+            background-position: center;
+            border: none;
+            cursor: pointer;
+        }
+        .item-button.found {
+            border: 3px solid green;
+        }
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            background-color: #e0e0e0;
+        }
+        .audio-control {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Қазақ мультфильмдері ойындары</h1>
+    
+    <input type="text" id="nameInput" placeholder="Аты жөніңіз">
+    <input type="text" id="classInput" placeholder="Сынып">
+
+    <button class="game-button" onclick="startGame('aldar')">1. Алдар көсе</button>
+    <button class="game-button" onclick="startGame('quiz')">2. Викторина</button>
+    <button class="game-button" onclick="startGame('makta')">3. Мақта қыз бен мысық</button>
+
+    <div id="gameContent"></div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="C:\Users\77477\Desktop\images\videoplayback.m4a" type="audio/mp4">
+    </audio>
+
+    <script>
+        let isPlaying = false;
+        const audio = document.getElementById('backgroundMusic');
+
+        function startGame(gameType) {
+            const gameContent = document.getElementById('gameContent');
+            gameContent.innerHTML = '';
+
+            const audioControls = `
+                <button class="audio-control" onclick="toggleAudio()">
+                    <span id="audioButtonText">Қосу</span>
+                </button>
+            `;
+
+            switch(gameType) {
+                case 'aldar':
+                    gameContent.innerHTML = `
+                        <h2>Алдар көсе ойыны</h2>
+                        <img src="C:\\Users\\77477\\Desktop\\images\\48cff87e8d755330acf5939c1d492315.jpg" alt="Алдар көсе" style="max-width: 100%;">
+                        <p>Алдар көсенің заттарын дұрыс ата!</p>
+                        <div id="itemsContainer" style="display: flex; flex-wrap: wrap; justify-content: center;"></div>
+                        <p>Табылған заттар: <span id="foundItems">0</span>/6</p>
+                        ${audioControls}
+                    `;
+                    createAldarGame();
+                    break;
+                case 'quiz':
+                    createQuizGame();
+                    break;
+                case 'makta':
+                    createMaktaGame();
+                    break;
+            }
+        }
+
+        function toggleAudio() {
+            if (isPlaying) {
+                audio.pause();
+                document.getElementById('audioButtonText').textContent = 'Қосу';
+            } else {
+                audio.play();
+                document.getElementById('audioButtonText').textContent = 'Өшіру';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function createAldarGame() {
+            const items = [
+               {name: 'Шапан', img: 'images/mqdefault.jpg'},
+        {name: 'Домбыра', img: 'images/td58k6ZaaWA.jpg'},
+        {name: 'Ат', img: 'images/1Ly2Rpnj6qM.jpg'},
+        {name: 'Кесе', img: 'images/5oZsbDUcCeg.jpg'},
+        {name: 'Қамшы', img: 'images/GFRimTPhPnU.jpg'},
+        {name: 'Белбеу', img: 'images/1702040315-dcae4bdfe951bd5837775e576fcb0ddf-487x315.jpg'}
+    ];
+            const itemsContainer = document.getElementById('itemsContainer');
+            let foundCount = 0;
+
+            items.sort(() => Math.random() - 0.5);
+
+            items.forEach(item => {
+                const button = document.createElement('button');
+                button.className = 'item-button';
+                button.style.backgroundImage = `url('${item.img}')`;
+                button.onclick = function() {
+                    if (!this.classList.contains('found')) {
+                        this.classList.add('found');
+                        this.innerHTML = `<span style="background-color: rgba(255,255,255,0.7); padding: 5px;">${item.name}</span>`;
+                        foundCount++;
+                        document.getElementById('foundItems').textContent = foundCount;
+                        if (foundCount === items.length) {
+                            alert('Жарайсың! Барлық заттарды таптың!');
+                        }
+                    }
+                };
+                itemsContainer.appendChild(button);
+            });
+        }
+
+        function createQuizGame() {
+    const questions = [
+        {
+            question: "1. Қай мультфильмде бас кейіпкер - қу тазша?",
+            options: ["Алдар Көсе", "Ер Төстік", "Қожанасыр"],
+            correct: 0
+        },
+        {
+            question: "2. Қай мультфильмде кейіпкер жер астына саяхат жасайды?",
+            options: ["Алдар Көсе", "Ер Төстік", "Қожанасыр"],
+            correct: 1
+        },
+        {
+            question: "3. Қай мультфильмде кейіпкер әзілқой және данышпан?",
+            options: ["Алдар Көсе", "Ер Төстік", "Қожанасыр"],
+            correct: 2
+        },
+        {
+            question: "4. Қазақ мультфильмдерінің ішінде ең танымал кейіпкер кім?",
+            options: ["Алдар Көсе", "Ер Төстік", "Қаңбақ шал"],
+            correct: 0
+        },
+        {
+            question: "5. Қай мультфильмде кейіпкер сиқырлы күштерге ие?",
+            options: ["Алдар Көсе", "Ер Төстік", "Қаңбақ шал"],
+            correct: 1
+        },
+        {
+            question: "6. Қай мультфильмде кейіпкер жануарлармен сөйлесе алады?",
+            options: ["Алдар Көсе", "Ер Төстік", "Қаңбақ шал"],
+            correct: 1
+        },
+        {
+            question: "7. Қай мультфильмде кейіпкер ұшу қабілетіне ие?",
+            options: ["Алдар Көсе", "Ер Төстік", "Қаңбақ шал"],
+            correct: 2
+        },
+        {
+            question: "8. Қай мультфильмде кейіпкер су астына сүңги алады?",
+            options: ["Алдар Көсе", "Ер Төстік", "Қаңбақ шал"],
+            correct: 1
+        }
+    ];
+
+    const gameContent = document.getElementById('gameContent');
+    gameContent.innerHTML = '<h2>Викторина</h2>';
+
+    questions.forEach((q, questionIndex) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.innerHTML = `
+            <p><strong>${q.question}</strong></p>
+            ${q.options.map((option, optionIndex) => 
+                `<button class="quiz-option" onclick="checkAnswer(${questionIndex}, ${optionIndex})">${option}</button>`
+            ).join('')}
+            <p id="result-${questionIndex}"></p>
+        `;
+        gameContent.appendChild(questionDiv);
+    });
+
+    window.checkAnswer = function(questionIndex, optionIndex) {
+        const question = questions[questionIndex];
+        const resultElement = document.getElementById(`result-${questionIndex}`);
+        if (optionIndex === question.correct) {
+            resultElement.textContent = 'Дұрыс!';
+            resultElement.style.color = 'green';
+        } else {
+            resultElement.textContent = 'Қате. Дұрыс жауап: ' + question.options[question.correct];
+            resultElement.style.color = 'red';
+        }
+    }
+}
+
+        function createMaktaGame() {
+            const gameContent = document.getElementById('gameContent');
+            gameContent.innerHTML = `
+                <h2>Мақта қыз бен мысық ойыны</h2>
+                <img src="C:\\Users\\77477\\Desktop\\images\\390959-mata-yz-ben-mysy-1.jpg" alt="Мақта қыз бен мысық" style="max-width: 100%;">
+                <p>Мақта қыз бен мысықтың оқиғасын жаз:</p>
+                <textarea id="storyText" rows="10" cols="50"></textarea>
+                <br>
+                <button onclick="submitStory()">Жіберу</button>
+            `;
+        }
+
+        function submitStory() {
+            const story = document.getElementById('storyText').value;
+            if (story.length > 0) {
+                alert('Жарайсың! Сен керемет оқиға жаздың!');
+            } else {
+                alert('Оқиғаны жазуды ұмытпаңыз!');
+            }
+        }
+    </script>
+</body>
+</html>
